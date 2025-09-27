@@ -1,0 +1,442 @@
+# ===================== CONFIG (BEGIN) =====================
+CONFIG:
+  subject: "Reinforcement Learning"
+  language: "ko"
+  source_type: "zip_pdfs"
+  output_format: "pdf"
+
+  output_files:
+    exam: "reinforcement_exam.pdf"
+    explain: "reinforcement_explain.pdf"
+    summary: "reinforcement_summary.pdf"
+    analysis_report: "rl_analysis_report.pdf"
+    focused_exam: "focused_20_exam.pdf"
+    focused_explain: "focused_20_explain.pdf"
+    mistake_log_csv: "mistake_log.csv"
+    confusion_matrix_png: "confusion_matrix.png"
+    learner_profile_json: "learner_profile.json"
+    mastery_dashboard_png: "mastery_dashboard.png"
+    learning_path_png: "learning_path.png"
+
+  exam_styles:
+    total_questions: 20
+    mix:
+      mcq:        {count: 12, choices: 4, shuffle_choices: true, forbid_all_of_the_above: true}
+      short:      {count: 5,  max_words: 150}
+      essay:      {count: 1,  min_words: 300, max_words: 600}
+      numeric:    {count: 2,  decimals: 3, tolerance: 1e-3, units_required: true, show_rounding_rule: true}
+      true_false: {count: 0}
+      fill_blank: {count: 0}
+      derivation: {count: 0, require_steps: true}
+
+  question:
+    difficulty_mix: {easy: 0.3, medium: 0.5, hard: 0.2}
+    coverage:
+      required_topics: ["MDP", "Value/Action Value", "Bellman Equations", "DP/MC/TD", "Q-learning", "SARSA", "Exploration (ε-greedy)", "Policy Gradient/Baselines"]
+      min_per_topic: 1
+    deduplication: "semantic"
+
+  math:
+    mode: "hybrid"
+    png_engine: "mathtext"
+
+  diagrams:
+    enable: true
+    label_language: "en"
+    replace_korean_with_ascii: true
+    engines: ["graphviz", "matplotlib"]
+    matplotlib_rc:
+      font.family: "DejaVu Sans"
+      font.sans-serif: ["DejaVu Sans"]
+      axes.unicode_minus: false
+    graphviz_fontname: "DejaVu Sans"
+    from_images: true
+    style:
+      node_shape: "rounded"
+      arrow: "->"
+      stroke_width: 1.2
+      font: "DejaVu Sans"
+    caption_format: "그림 {n}. 다이어그램 변환 ({filename}, p.{page})"
+    size:
+      target_width_ratio: 0.6
+      max_width_px: 600
+      max_height_px: 400
+      preserve_aspect_ratio: true
+    quality_gate:
+      reject_black_or_blank: true
+      accept_only_relevant: true
+      replace_if_irrelevant: true
+      fallback_to_text_question: true
+
+  constraints:
+    max_line_chars: 40
+    prefer_multiline_numeric: true
+    no_inline_long_parentheses: true
+    no_answer_labels_in_exam: true
+    no_meta_lines_as_options: true
+    no_short_or_broken_sentences: true
+    no_numbers_only_options: true
+    essay_area_replaces_short_boxes: true            # (에세이는 좁은 박스 금지)
+    short_area_replaces_small_boxes: true            # ★ Short도 박스 여러 개 금지(넓은 영역 사용)
+    # === 해설 품질 게이트(추가) ===
+    explain_quality_gate:
+      mcq_min_words: 80
+      short_min_words: 100
+      numeric_min_words: 60
+      forbid_phrases_in_explain:
+        - "표준 정의/특성에 부합합니다"
+        - "자명합니다"
+        - "상식적으로 맞습니다"
+      require_sections:
+        mcq: ["정답 근거","오답 분석","출처"]
+        numeric: ["문제 해석","공식/대입","계산","반올림/단위"]
+
+  style:
+    show_topic_tag_in_explain: true
+    visual_hierarchy:
+      question_number: {bold: true, font_size: 13}
+      options:        {indent: true, font_size: 11}
+      spacing:        {between_questions: 1.0}
+
+    # Short 답안 렌더링 — 단일 넓은 영역
+    short_answer:
+      answer_box: false                 # ★ 작은 박스 사용하지 않음
+      area: true                        # ★ 단일 넓은 영역
+      ruled: false                      # 줄노트 선 필요시 true
+      area_height_mm: 45                # 영역 높이(필요 시 조절)
+      margins_mm: {top: 6, bottom: 6}
+
+    # Essay 답안 렌더링 — 단일 넓은 영역(지난 수정 유지)
+    essay_answer:
+      area: true
+      ruled: false
+      area_height_mm: 120
+      min_lines: 12
+      margins_mm: {top: 8, bottom: 8}
+
+  fonts:
+    pdf_korean_font: "HCRBatang"
+    math_font: "DejaVu Serif"
+    auto_embed_from_zip: true
+    preferred_font_patterns:
+      - "hcr.*batang"
+      - "hysmyeongjo.*medium"
+      - "nanum.*"
+      - "noto.*cjk.*kr"
+    fallback_cid_font: "HYGoThic-Medium"
+
+  # ===== 해설 전용 규칙(추가) =====
+  explanations:
+    citation:
+      require: true
+      format: "{filename}, p.{page}"
+      when_missing: "concept-only"
+    mcq:
+      min_words: 80
+      structure:
+        - "정답 근거: 정의/수식/정리로 왜 맞는지"
+        - "오답 분석: A~D 각 선택지가 왜 틀렸는지"
+        - "참고식/식 전개(가능 시)"
+      include_equation_if_applicable: true
+      require_why_incorrect: "all"
+      forbid_phrases:
+        - "표준 정의/특성에 부합합니다"
+        - "상식적으로 맞습니다"
+    short:
+      model_answer:
+        min_words: 100
+        require_keywords: 2
+        structure: ["핵심정의","예시/직관","주의점"]
+      cite_source: true
+    numeric:
+      show_steps: true
+      show_rounding_rule: true
+      units_check: true
+      structure: ["문제 해석","공식/대입","계산","반올림/단위 점검"]
+      min_words: 60
+    essay:
+      outline_first: true
+      min_words: ${exam_styles.mix.essay.min_words}
+      must_include: ["정의","비교","한계"]
+      cite_source: true
+
+  # ===== 채점/루브릭(보강) =====
+  grading:
+    weights: {mcq: 1.0, short: 1.0, numeric: 1.0, essay: 1.0}
+    mcq:
+      require_why_correct: true
+      require_why_incorrect: "all"
+      require_citation: true
+    numeric:
+      decimals:    ${exam_styles.mix.numeric.decimals}
+      tolerance:   ${exam_styles.mix.numeric.tolerance}
+      units_required: ${exam_styles.mix.numeric.units_required}
+      show_rounding_rule: ${exam_styles.mix.numeric.show_rounding_rule}
+    rubric:
+      short:
+        min_chars: 20
+        min_keywords: 2
+        keywords: []
+        keyword_source: "auto"
+        auto_top_k: 12
+      essay:
+        min_words: ${exam_styles.mix.essay.min_words}
+        max_words: ${exam_styles.mix.essay.max_words}
+        must_include: ["정의","비교","한계"]
+
+  # ===== Summary 모드 전용 설정 =====
+  summary_enhanced:
+    content_depth:
+      target_pages: 20
+      per_topic_pages: 2.5
+      detail_level: "comprehensive"
+    content_structure:
+      per_topic_sections:
+        - "핵심 정의 및 배경"
+        - "수학적 기반 (수식 유도 포함)"
+        - "알고리즘 상세 설명"
+        - "구체적 예시 및 적용"
+        - "다른 개념과의 비교"
+        - "실무 응용 사례"
+        - "주의사항 및 한계점"
+        - "학습 체크포인트"
+    visual_integration:
+      diagram_regeneration: true
+      algorithm_flowcharts: true
+      concept_relationship_maps: true
+      mathematical_derivations: true
+      example_visualizations: true
+      comparison_tables: true
+    learning_support:
+      prerequisite_knowledge: "각 토픽별 선수 지식 명시"
+      common_mistakes: "자주 하는 실수와 해결법"
+      confusion_points: "헷갈리기 쉬운 개념 구분"
+      practice_suggestions: "추가 연습 방향 제시"
+      further_reading: "심화 학습 자료 추천"
+
+  # ===== Phase 1-2: 강화된 분석 레포트 설정 =====
+  analysis_enhanced:
+    multidimensional_analysis:
+      error_classification:
+        conceptual_misconception:
+          description: "개념적 오해 - 기본 정의/원리 잘못 이해"
+          indicators: ["정의 관련 MCQ 오답", "핵심 공식 잘못 적용", "Short 답안 키워드 누락"]
+          weight: 3.0
+        procedural_error:
+          description: "절차적 실수 - 알고 있지만 실행 과정 실수"
+          indicators: ["계산 실수", "단위 누락", "공식 대입 순서 오류"]
+          weight: 2.0
+        strategic_failure:
+          description: "전략적 실패 - 문제 해결 접근법 부적절"
+          indicators: ["복잡한 문제 포기", "시간 배분 실패", "검토 누락"]
+          weight: 2.5
+        attention_deficit:
+          description: "주의력 결핍 - 단순 실수나 꼼꼼함 부족"
+          indicators: ["보기 잘못 읽음", "부호 실수", "반올림 실수"]
+          weight: 1.5
+      topic_mastery_levels:
+        levels:
+          novice: {range: [0, 40], description: "미습득", color: "#FF4444"}
+          developing: {range: [40, 60], description: "기초", color: "#FF8800"}
+          proficient: {range: [60, 80], description: "보통", color: "#FFAA00"}
+          advanced: {range: [80, 100], description: "우수", color: "#44AA44"}
+        prerequisites_mapping: true
+        difficulty_progression_analysis: true
+      question_type_patterns:
+        mcq_analysis:
+          concept_vs_memorization: true
+          trap_option_vulnerability: true
+          elimination_strategy_effectiveness: true
+        numeric_analysis:
+          formula_application_errors: true
+          calculation_vs_concept_errors: true
+          unit_rounding_mistakes: true
+        short_answer_analysis:
+          keyword_coverage: true
+          logical_flow_assessment: true
+          example_usage_ability: true
+
+    learning_tactics:
+      conceptual_reinforcement:
+        visual_mapping: "개념 간 관계도 그리기"
+        verbal_explanation: "개념을 다른 사람에게 설명하기"
+        analogical_thinking: "일상 예시와 연결하여 이해"
+        contrast_analysis: "유사 개념 간 차이점 분석"
+      procedural_practice:
+        step_by_step_breakdown: "복잡한 절차를 단계별로 분해"
+        worked_examples: "완전해결 예제 반복 학습"
+        practice_scheduling: "분산 연습 스케줄"
+        error_pattern_tracking: "자주 하는 실수 패턴 기록"
+      strategic_development:
+        problem_classification: "문제 유형별 해결 전략 체계화"
+        time_management: "문제별 시간 할당 연습"
+        verification_routine: "답안 검토 체크리스트"
+        metacognitive_monitoring: "풀이 과정 성찰"
+      attention_enhancement:
+        active_reading: "문제 핵심 요소 밑줄치기"
+        double_checking: "계산 결과 재확인 습관"
+        organized_workspace: "깔끔한 풀이 과정 정리"
+        mindfulness_practice: "집중력 향상 훈련"
+
+    learner_profiling:
+      cognitive_style:
+        visual_verbal_preference: "시각적 vs 언어적 정보 처리 선호"
+        inductive_deductive_thinking: "귀납적 vs 연역적 사고 패턴"
+        sequential_global_processing: "순차적 vs 전체적 정보 처리"
+        reflective_impulsive_tendency: "신중한 vs 즉흥적 의사결정"
+      learning_characteristics:
+        information_processing_speed: "정보 처리 속도 측정"
+        working_memory_capacity: "작업 기억 용량 추정"
+        attention_span_duration: "집중 지속 시간"
+        transfer_learning_ability: "지식 전이 능력"
+      motivational_factors:
+        intrinsic_motivation_level: "내재적 동기 수준"
+        challenge_preference: "도전 과제 선호도"
+        feedback_sensitivity: "피드백 민감도"
+        persistence_pattern: "과제 지속 패턴"
+
+    adaptive_question_generation:
+      difficulty_adjustment:
+        zone_of_proximal_development: "적정 도전 수준 유지"
+        mastery_based_progression: "숙달 기반 난이도 상승"
+        failure_recovery_path: "실패 시 난이도 조절"
+      content_personalization:
+        weakness_topic_weighting: "약점 토픽 가중 출제"
+        prerequisite_reinforcement: "선수 개념 보강 문제"
+        strength_area_challenge: "강점 영역 심화 문제"
+        interdisciplinary_connection: "타 분야 연계 문제"
+      format_optimization:
+        preferred_question_type: "선호 문제 형식 반영"
+        scaffolding_level: "지원 수준 조절"
+        context_relevance: "개인 관심사 반영"
+
+    predictive_analytics:
+      performance_forecasting:
+        next_score_prediction: "다음 시험 예상 점수 범위"
+        improvement_timeline: "목표 달성 예상 기간"
+        plateau_risk_assessment: "학습 정체 위험도"
+        optimal_study_duration: "최적 학습 시간 추천"
+      bottleneck_identification:
+        critical_concept_gaps: "핵심 개념 결함 탐지"
+        prerequisite_chain_breaks: "선수 지식 연결 고리 결함"
+        cognitive_overload_points: "인지 부하 과다 지점"
+        motivation_decline_predictors: "동기 저하 예측 지표"
+      learning_path_optimization:
+        dependency_analysis: "개념 의존성 분석"
+        critical_learning_sequence: "핵심 학습 순서"
+        alternative_pathways: "대안 학습 경로"
+        checkpoint_milestones: "중간 점검 지점"
+
+  # ===== 손필기 PDF OCR =====
+  ocr:
+    enable: true
+    expected_layout: "AUTO_FROM_exam_styles"
+    infer_layout:
+      strategy: "by_count_then_order"
+    preprocess:
+      dewarp: true
+      denoise: true
+      binarize: true
+      crop_margins: true
+    mcq_detection:
+      detect_boxes_or_circles: true
+      fallback_text_parse: true
+      tie_break_policy: "most_confident"
+    numeric_parse:
+      allow_scientific: true
+      decimal_mark: "."
+      unit_regex: "(?:[a-zA-Zμ%/]+)$"
+    text_lang_hint: "ko"
+    page_to_qindex_map: "auto"
+    manual_override_allowed: true
+
+  seed: 42
+# ===================== CONFIG (END) =====================
+
+# =============== STEP FLOW / PIPELINE (BEGIN) ===============
+STEP_FLOW:
+  STEP_1_INPUT:
+    description: >
+      ZIP 파일 입력을 로드한다.
+      - 필수: {source_type} 압축 해제, PDF 텍스트/수식/그림/표 추출(PyMuPDF/pdfplumber)
+      - 수식: {math.mode} 규칙(간단=유니코드, 복잡=LaTeX→PNG)
+      - 그림/표: 픽셀 복붙 금지, 구조/관계 파악해 Graphviz/Matplotlib 재구성
+      - 로고/머리글/워터마크 제외, OCR/크롭/리사이즈로 가독성 확보
+    inputs:
+      zip_path: "<USER_UPLOAD_ZIP>"
+      optional_user_answer_pdf: "<USER_ANSWER_PDF_OR_EMPTY>"
+      optional_user_answer_sheet: "<USER_ANSWERS_CSV_OR_EMPTY>"
+    extract_evidence:
+      sentences_topk_per_topic: 3
+      equations_topk_per_topic: 2
+      store_as: "evidence_bank"
+
+  FONT_REGISTRATION:
+    description: >
+      ZIP 내부 .ttf를 {fonts.preferred_font_patterns} 우선순위로 탐색하여 임베딩.
+      실패 시 {fonts.fallback_cid_font}로 대체하고, 첫 페이지에 경고.
+
+  STEP_2_MODE_SELECTION:
+    mode: "analysis_report"
+    presets:
+      summary:
+        output_selection: {generate_summary: true, generate_exam: false, generate_explanation: false, generate_analysis_report: false, generate_focused_set: false}
+      exam:
+        output_selection: {generate_summary: false, generate_exam: true, generate_explanation: true, generate_analysis_report: false, generate_focused_set: false}
+      analysis_report:
+        output_selection: {generate_summary: false, generate_exam: false, generate_explanation: false, generate_analysis_report: true, generate_focused_set: true, generate_learner_profile: true, generate_adaptive_questions: true}
+
+  STEP_3_EXECUTION:
+    common_text_cleanup:
+      - 줄바꿈/공백 정리, 짧은/깨진 문장 제거, 메타텍스트 제외
+      - 키토픽 추출 → {question.coverage} 충족 토픽맵 구성
+      - 다이어그램 품질 게이트 적용
+      - "각 문항/보기는 40자 내 하드랩, 초과 시 자연 분할"
+      - "긴 괄호/나열은 줄바꿈·불릿으로 변환"
+
+    analysis_report_mode:
+      run_if_mode: "analysis_report"
+      expects:
+        - "이미 생성된 {output_files.exam} 또는 동등 포맷(문항번호/형식 동일)"
+        - "손필기 PDF 또는 CSV"
+      pipeline:
+        - "A) 정답키 재구성"
+        - "B) 답안 로드 (CSV 우선)"
+        - "C) 기본 채점 (루브릭/허용오차/단위)"
+        - "D1) 오답 분류 분석 ..."
+        - "F) 시각화 및 리포트 생성 ..."
+        - "G) 맞춤형 집중 세트 ..."
+
+    summary_mode:
+      run_if_mode: "summary"
+      pipeline:
+        - "A) 전체 문서 구조 분석 ..."
+      outputs:
+        - {output_files.summary}
+
+    exam_mode:
+      run_if_mode: "exam"
+      pipeline:
+        - "문항 생성: 총 {exam_styles.total_questions}, 분포 {exam_styles.mix}"
+        - "해설 생성: explanations 규칙 강제"
+        - "SHORT 렌더링:
+             - constraints.short_area_replaces_small_boxes=true이면
+               style.short_answer.area=true 설정을 따라 단일 넓은 답안 영역을 사용
+             - ruled=true이면 area_height_mm을 n줄로 균등 분할해 가로줄 표시
+             - answer_box=false이므로 작은 박스는 그리지 않음"
+        - "ESSAY 렌더링:
+             - style.essay_answer.area=true이면 단일 넓은 답안 영역 사용
+             - ruled=true이면 줄노트 표시"
+        - "MCQ 해설 체크리스트:
+             1) 정답 근거(정의/수식/정리 중 ≥1)
+             2) 오답 A~D 각각의 반증/틀린 이유
+             3) 출처 인용 {explanations.citation.format}"
+        - "Numeric 해설: 문제 해석→공식/대입→계산→반올림/단위 점검"
+        - "Short/Essay: 모델답안 스케치 + 키워드 표시(볼드/밑줄)"
+        - "품질 게이트:
+             - 분량 미달/금지어/출처 누락 시 evidence_bank로 보강 후 1회 재시도"
+        - "해설/시험 PDF 렌더"
+      outputs:
+        - {output_files.exam}
+        - {output_files.explain}
+# =============== STEP FLOW / PIPELINE (END) ===============
