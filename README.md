@@ -1,0 +1,70 @@
+# FYEX: For Your EXam  
+AI 기반 학습 특화 프롬프트
+> 팀명: **단도리**
+>
+> 참여인원: 김도익(PM), 임용, 이승재, 조민혁
+>
+> 프로젝트 진행기간: 2025.08.26 ~ 2025.09.30 
+---
+
+## 📌 개요
+FYEX는 단순한 시험 문제 생성기를 넘어, **강의 요약 → 시험 문제 출제 → 해설 → 학습 분석 및 피드백**으로 이어지는 통합 학습 파이프라인을 제공합니다:contentReference[oaicite:0]{index=0}.  
+이 도구는 학습자의 이해도 진단, 오답 분석, 맞춤형 학습 경로 제시까지 지원하여 자기주도 학습과 시험 대비를 효율적으로 돕습니다.
+
+---
+
+## 🚀 주요 특징
+- **강의 요약(Summary Mode)**: 강의 자료에서 정의·공식·다이어그램을 추출하고 요약 PDF 생성:contentReference[oaicite:1]{index=1}.  
+- **시험 문제 생성(Exam Mode)**: 객관식·단답형·서술형·수식 문제를 자동 생성, 난이도 분포(쉬움 30%, 보통 50%, 어려움 20%) 반영:contentReference[oaicite:2]{index=2}.  
+- **분석 리포트(Analysis Mode)**: 채점 결과 기반으로 학습자의 취약 개념, 오답 유형(개념적 오해·계산 실수·전략 실패 등)을 분석해 맞춤형 학습 경로 제공:contentReference[oaicite:3]{index=3}.  
+- **출력 지원**: 결과물을 PDF (Summary, Exam, Explanation, Report) 형태로 변환. 한글/수식 깨짐 방지 처리:contentReference[oaicite:4]{index=4}.
+
+---
+
+## ⚙️ 사용 방법
+
+### 1. 입력 단계
+- `ZIP` 형식으로 **강의 자료(PDF, 이미지 포함)** 업로드  
+- FYEX Prompt 업로드
+
+### 2. 모드 선택
+- **사용하고자 하는 모드 true 설정 및 이외의 모드 false 설정**  
+- `Summary Mode`: 강의 요약 PDF 생성  
+- `Exam Mode`: 시험 문제 + 해설 PDF 생성  
+- `Analysis Mode`: 학습 분석 및 리포트 생성:contentReference[oaicite:6]{index=6}
+
+### 3. 처리 단계
+- 문서 구조 분석 및 요약  
+- 문제 자동 생성 및 품질 검증 (evidence_bank 활용)  
+- 정답/해설 기반 채점, 오답 분석 및 학습 경로 추천:contentReference[oaicite:7]{index=7}
+
+### 4. 출력 단계
+- 결과물을 PDF로 렌더링  
+- 폰트 임베딩으로 한국어·수식 안정성 보장  
+- 품질 검증 후 최종 PDF 제공:contentReference[oaicite:8]{index=8}
+- **생성된 PDF 다운로드 후 사용**  
+
+---
+
+## 📂 결과물 예시
+- **Summary PDF**: 강의 핵심 개념 요약  
+- **Exam PDF**: 객관식·단답형·서술형 시험지  
+- **Explanation PDF**: 문제 해설 및 풀이  
+- **Analysis Report**: 학습 패턴 분석, 맞춤형 학습 경로:contentReference[oaicite:9]{index=9}
+
+---
+
+## 🛠️ 문제 해결 방안
+- **PDF 텍스트 추출 오류** → PyMuPDF, pdfplumber + OCR 적용  
+- **수식 깨짐** → 간단 수식은 유니코드, 복잡 수식은 LaTeX → PNG 변환  
+- **출력 안정화** → TTF 폰트 자동 임베딩, 금지어·출처 검증 게이트 적용:contentReference[oaicite:10]{index=10}
+
+---
+
+## 🎯 기대효과
+- **효율적 학습 지원**: 요약 및 시험 대비 시간 단축  
+- **정확한 피드백**: 단순 점수 제공을 넘어 오답 원인 분석  
+- **자기주도 학습 촉진**: 맞춤형 문제 세트 및 학습 경로 제공  
+- **미래 역량 강화**: 비판적 사고·문제 해결력·메타인지 역량 향상:contentReference[oaicite:11]{index=11}
+
+---
