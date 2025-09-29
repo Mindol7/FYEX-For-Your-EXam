@@ -1,21 +1,5 @@
-question_number,topic,type,status,error_type,note
-1,MDP,MCQ,wrong,conceptual_misconception,핵심 개념·정의·수식의 이해 부족
-2,Value/Action Value,MCQ,correct,,
-3,Bellman Equations,MCQ,wrong,conceptual_misconception,핵심 개념·정의·수식의 이해 부족
-4,DP/MC/TD,MCQ,wrong,conceptual_misconception,핵심 개념·정의·수식의 이해 부족
-5,Q-learning,MCQ,correct,,
-6,SARSA,MCQ,wrong,conceptual_misconception,핵심 개념·정의·수식의 이해 부족
-7,Exploration (ε-greedy),MCQ,wrong,attention_deficit,보기 문구의 함정/부호/조건을 정확히 읽지 못함
-8,Policy Gradient/Baselines,MCQ,wrong,conceptual_misconception,핵심 개념·정의·수식의 이해 부족
-9,DP/MC/TD,MCQ,correct,,
-10,Bellman Equations,MCQ,wrong,conceptual_misconception,핵심 개념·정의·수식의 이해 부족
-11,Value/Action Value,MCQ,wrong,attention_deficit,보기 문구의 함정/부호/조건을 정확히 읽지 못함
-12,Q-learning,MCQ,wrong,conceptual_misconception,핵심 개념·정의·수식의 이해 부족
-13,MDP,SHORT,wrong,conceptual_misconception,핵심 개념·정의·수식의 이해 부족
-14,DP/MC/TD,SHORT,wrong,conceptual_misconception,핵심 개념·정의·수식의 이해 부족
-15,Bellman Equations,SHORT,correct,,
-16,Exploration (ε-greedy),SHORT,wrong,conceptual_misconception,핵심 개념·정의·수식의 이해 부족
-17,Policy Gradient/Baselines,SHORT,wrong,conceptual_misconception,핵심 개념·정의·수식의 이해 부족
-18,Returns,NUMERIC,wrong,procedural_error,계산/대입·반올림 등 절차 오류 가능성이 큼
-19,TD(0),NUMERIC,wrong,procedural_error,계산/대입·반올림 등 절차 오류 가능성이 큼
-20,DP/MC/TD,ESSAY,wrong,strategic_failure,구조화·시간배분·논지전개 전략 미흡
+question_no,topic,type,correct_answer,user_answer,error_type,notes
+2,Value/Action Value,mcq,A,<incorrect>,conceptual_misconception,"V와 Q의 관계 오해: V(s)=max_a Q(s,a) 정답을 놓침"
+5,Q-learning,mcq,C,<incorrect>,conceptual_misconception,"Q-learning 타깃은 max_a' Q(s',a') — 오프폴리시 개념 혼동"
+15,Q-learning,short,,<incorrect>,conceptual_misconception,오프폴리시 vs 온폴리시(숏답) 개념 서술 오류
+19,Q-learning,numeric,3.8 value,<incorrect>,procedural_error,수식 대입/반올림/단위 점검 중 절차적 실수 가능
