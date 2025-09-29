@@ -44,7 +44,7 @@ FYEX는 단순한 시험 문제 생성기를 넘어, **강의 요약 → 시험 
 - 폰트 임베딩으로 한국어·수식 안정성 보장  
 - 품질 검증 후 최종 PDF 제공  
 - **생성된 PDF 다운로드 후 사용**
-- [결과물 예시](TBD)
+- [결과물 예시](https://github.com/Mindol7/FYEX-For-Your-EXam/tree/main/output_file)
 
 ---
 
