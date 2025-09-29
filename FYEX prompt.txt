@@ -196,7 +196,7 @@ CONFIG:
       min_words: 60
     essay:
       outline_first: true
-      min_words: ${exam_styles.mix.essay.min_words}
+      min_words: {{exam_styles.mix.essay.min_words}}
       must_include: ["정의", "비교", "한계"]
       cite_source: true
 
@@ -207,10 +207,10 @@ CONFIG:
       require_why_incorrect: "all"
       require_citation: true
     numeric:
-      decimals: ${exam_styles.mix.numeric.decimals}
-      tolerance: ${exam_styles.mix.numeric.tolerance}
-      units_required: ${exam_styles.mix.numeric.units_required}
-      show_rounding_rule: ${exam_styles.mix.numeric.show_rounding_rule}
+      decimals: {{exam_styles.mix.numeric.decimals}}
+      tolerance: {{exam_styles.mix.numeric.tolerance}}
+      units_required: {{exam_styles.mix.numeric.units_required}}
+      show_rounding_rule: {{exam_styles.mix.numeric.show_rounding_rule}}
     rubric:
       short:
         min_chars: 20
@@ -219,8 +219,8 @@ CONFIG:
         keyword_source: "auto"
         auto_top_k: 12
       essay:
-        min_words: ${exam_styles.mix.essay.min_words}
-        max_words: ${exam_styles.mix.essay.max_words}
+        min_words: {{exam_styles.mix.essay.min_words}}
+        max_words: {{exam_styles.mix.essay.max_words}}
         must_include: ["정의", "비교", "한계"]
 
   summary_enhanced:
