@@ -24,7 +24,7 @@ FYEX는 단순한 시험 문제 생성기를 넘어, **강의 요약 → 시험 
 ## ⚙️ 사용 방법
 
 ### 1. 입력 단계
-- `ZIP` 형식으로 **강의 자료(PDF, 이미지 포함)** 업로드  
+- `ZIP` 형식으로 **강의 자료(PDF, 이미지 포함)** 업로드 **([테스트용 ZIP 파일](https://github.com/Mindol7/FYEX-For-Your-EXam/blob/main/prompt_test_input_file.zip) 업로드)**  
 - [FYEX Prompt](https://github.com/Mindol7/FYEX-For-Your-EXam/blob/main/FYEX%20prompt.md) 업로드
 
 ### 2. 모드 선택

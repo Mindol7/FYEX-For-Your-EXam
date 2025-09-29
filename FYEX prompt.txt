@@ -1,4 +1,4 @@
-# ===================== CONFIG (BEGIN) =====================
+# ===================== CONFIG (TEMPLATE-AWARE, FINAL) =====================
 CONFIG:
   subject: "Reinforcement Learning"
   language: "ko"
@@ -18,13 +18,69 @@ CONFIG:
     mastery_dashboard_png: "mastery_dashboard.png"
     learning_path_png: "learning_path.png"
 
+  # ---------- 템플릿 바인딩 설정 (PDF 템플릿 고정 레이아웃 준수) ----------
+  templates:
+    exam:
+      path: "templates/시험지템플릿.pdf"     # PDF 템플릿 경로
+      engine: "pdf_anchor"                    # pdf_anchor | docx | latex | markdown
+      strict: true                            # 템플릿 레이아웃을 엄격히 준수
+      anchor_map: "templates/exam_template_map.yml"  # 페이지/좌표 앵커 정의 파일
+      validation:
+        require: ["page>=1", "anchors>=1"]
+        on_missing: "error"                   # 필수 앵커 누락 시 에러
+      overflow:
+        line_wrap: "word"                     # word | char (단어 단위 줄바꿈)
+        autoshrink_min_pt: 9                  # 넘치면 글꼴 축소(최소 pt)
+        hyphenate: false
+      tables:
+        auto_column_balance: true
+        allow_autosplit_rows: true
+        header_repeat: true
+      equations:
+        baseline_align: true                  # 수식 베이스라인 정렬
+        png_scale: 1.25
+      images:
+        fit: "contain"
+        max_width_px: 1200
+        dpi: 300
+
+    analysis_report:
+      path: "templates/분석보고서 템플릿.pdf"
+      engine: "pdf_anchor"
+      strict: true
+      anchor_map: "templates/report_template_map.yml"
+      validation:
+        require: ["[ANCHOR:EXEC_SUMMARY]", "[FIG:CONFUSION_MATRIX]"]
+        on_missing: "auto_insert"            # 일부 앵커 누락 시 자동 섹션 추가
+        auto_insert_style: "append_section_at_end"
+      tables:
+        allow_autosplit_rows: true
+        header_repeat: true
+      images:
+        fit: "contain"
+        max_width_px: 1400
+        dpi: 300
+
+  templating:
+    engine_preference: ["pdf_anchor", "docx", "latex", "markdown"]
+    variable_syntax: {open: "{{", close: "}}"}
+    list_syntax: {start: "{{#", end: "}}", close: "{{/..}}"}
+    image_anchors: true
+    table_repeaters:
+      enable: true
+      row_marker: "{{#rows}}...{{/rows}}"
+    keep_template_styles: true               # 템플릿 폰트/여백 유지
+    respect_paragraph_styles: true
+    fallback_if_strict_fails: "abort"
+
+  # ---------- 시험지/문항 구성 ----------
   exam_styles:
     total_questions: 20
     mix:
       mcq:        {count: 12, choices: 4, shuffle_choices: true, forbid_all_of_the_above: true}
       short:      {count: 5,  max_words: 150}
       essay:      {count: 1,  min_words: 300, max_words: 600}
-      numeric:    {count: 2,  decimals: 3, tolerance: 1e-3, units_required: true, show_rounding_rule: true}
+      numeric:    {count: 2,  decimals: 1, tolerance: 1e-3, units_required: true, show_rounding_rule: true}
       true_false: {count: 0}
       fill_blank: {count: 0}
       derivation: {count: 0, require_steps: true}
@@ -76,20 +132,8 @@ CONFIG:
     no_meta_lines_as_options: true
     no_short_or_broken_sentences: true
     no_numbers_only_options: true
-    essay_area_replaces_short_boxes: true            # (에세이는 좁은 박스 금지)
-    short_area_replaces_small_boxes: true            # ★ Short도 박스 여러 개 금지(넓은 영역 사용)
-    # === 해설 품질 게이트(추가) ===
-    explain_quality_gate:
-      mcq_min_words: 80
-      short_min_words: 100
-      numeric_min_words: 60
-      forbid_phrases_in_explain:
-        - "표준 정의/특성에 부합합니다"
-        - "자명합니다"
-        - "상식적으로 맞습니다"
-      require_sections:
-        mcq: ["정답 근거","오답 분석","출처"]
-        numeric: ["문제 해석","공식/대입","계산","반올림/단위"]
+    essay_area_replaces_short_boxes: true
+    short_area_replaces_small_boxes: true
 
   style:
     show_topic_tag_in_explain: true
@@ -97,16 +141,12 @@ CONFIG:
       question_number: {bold: true, font_size: 13}
       options:        {indent: true, font_size: 11}
       spacing:        {between_questions: 1.0}
-
-    # Short 답안 렌더링 — 단일 넓은 영역
     short_answer:
-      answer_box: false                 # ★ 작은 박스 사용하지 않음
-      area: true                        # ★ 단일 넓은 영역
-      ruled: false                      # 줄노트 선 필요시 true
-      area_height_mm: 45                # 영역 높이(필요 시 조절)
+      answer_box: false
+      area: true
+      ruled: false
+      area_height_mm: 45
       margins_mm: {top: 6, bottom: 6}
-
-    # Essay 답안 렌더링 — 단일 넓은 영역(지난 수정 유지)
     essay_answer:
       area: true
       ruled: false
@@ -125,7 +165,7 @@ CONFIG:
       - "noto.*cjk.*kr"
     fallback_cid_font: "HYGoThic-Medium"
 
-  # ===== 해설 전용 규칙(추가) =====
+  # ---------- 해설/채점/품질 ----------
   explanations:
     citation:
       require: true
@@ -146,21 +186,20 @@ CONFIG:
       model_answer:
         min_words: 100
         require_keywords: 2
-        structure: ["핵심정의","예시/직관","주의점"]
+        structure: ["핵심정의", "예시/직관", "주의점"]
       cite_source: true
     numeric:
       show_steps: true
       show_rounding_rule: true
       units_check: true
-      structure: ["문제 해석","공식/대입","계산","반올림/단위 점검"]
+      structure: ["문제 해석", "공식/대입", "계산", "반올림/단위 점검"]
       min_words: 60
     essay:
       outline_first: true
       min_words: ${exam_styles.mix.essay.min_words}
-      must_include: ["정의","비교","한계"]
+      must_include: ["정의", "비교", "한계"]
       cite_source: true
 
-  # ===== 채점/루브릭(보강) =====
   grading:
     weights: {mcq: 1.0, short: 1.0, numeric: 1.0, essay: 1.0}
     mcq:
@@ -168,8 +207,8 @@ CONFIG:
       require_why_incorrect: "all"
       require_citation: true
     numeric:
-      decimals:    ${exam_styles.mix.numeric.decimals}
-      tolerance:   ${exam_styles.mix.numeric.tolerance}
+      decimals: ${exam_styles.mix.numeric.decimals}
+      tolerance: ${exam_styles.mix.numeric.tolerance}
       units_required: ${exam_styles.mix.numeric.units_required}
       show_rounding_rule: ${exam_styles.mix.numeric.show_rounding_rule}
     rubric:
@@ -182,9 +221,8 @@ CONFIG:
       essay:
         min_words: ${exam_styles.mix.essay.min_words}
         max_words: ${exam_styles.mix.essay.max_words}
-        must_include: ["정의","비교","한계"]
+        must_include: ["정의", "비교", "한계"]
 
-  # ===== Summary 모드 전용 설정 =====
   summary_enhanced:
     content_depth:
       target_pages: 20
@@ -214,7 +252,6 @@ CONFIG:
       practice_suggestions: "추가 연습 방향 제시"
       further_reading: "심화 학습 자료 추천"
 
-  # ===== Phase 1-2: 강화된 분석 레포트 설정 =====
   analysis_enhanced:
     multidimensional_analysis:
       error_classification:
@@ -327,7 +364,6 @@ CONFIG:
         alternative_pathways: "대안 학습 경로"
         checkpoint_milestones: "중간 점검 지점"
 
-  # ===== 손필기 PDF OCR =====
   ocr:
     enable: true
     expected_layout: "AUTO_FROM_exam_styles"
@@ -351,10 +387,17 @@ CONFIG:
     manual_override_allowed: true
 
   seed: 42
-# ===================== CONFIG (END) =====================
 
-# =============== STEP FLOW / PIPELINE (BEGIN) ===============
+# ===================== STEP FLOW / PIPELINE (FINAL) =====================
 STEP_FLOW:
+  STEP_0_TEMPLATE_INSPECTION:
+    description: >
+      템플릿/앵커맵 로드 → 페이지/좌표/토큰 검증 → 누락/중복/충돌 리포트.
+    checks:
+      - page_bbox_out_of_range: "error"
+      - overlapping_anchors: "warn"
+      - missing_required_anchors: "error"
+
   STEP_1_INPUT:
     description: >
       ZIP 파일 입력을 로드한다.
@@ -363,7 +406,7 @@ STEP_FLOW:
       - 그림/표: 픽셀 복붙 금지, 구조/관계 파악해 Graphviz/Matplotlib 재구성
       - 로고/머리글/워터마크 제외, OCR/크롭/리사이즈로 가독성 확보
     inputs:
-      zip_path: "<USER_UPLOAD_ZIP>"
+      zip_path: "/mnt/data/reinforce_learning.zip"
       optional_user_answer_pdf: "<USER_ANSWER_PDF_OR_EMPTY>"
       optional_user_answer_sheet: "<USER_ANSWERS_CSV_OR_EMPTY>"
     extract_evidence:
@@ -377,7 +420,7 @@ STEP_FLOW:
       실패 시 {fonts.fallback_cid_font}로 대체하고, 첫 페이지에 경고.
 
   STEP_2_MODE_SELECTION:
-    mode: "analysis_report"
+    mode: "exam"
     presets:
       summary:
         output_selection: {generate_summary: true, generate_exam: false, generate_explanation: false, generate_analysis_report: false, generate_focused_set: false}
@@ -403,14 +446,46 @@ STEP_FLOW:
         - "A) 정답키 재구성"
         - "B) 답안 로드 (CSV 우선)"
         - "C) 기본 채점 (루브릭/허용오차/단위)"
-        - "D1) 오답 분류 분석 ..."
-        - "F) 시각화 및 리포트 생성 ..."
-        - "G) 맞춤형 집중 세트 ..."
+        - "D1) 오답 분류 분석 (개념/절차/전략/주의력)"
+        - "D2) 토픽 숙련도/난이도 진행/유형 패턴"
+        - "E) 예측·학습전략·프로파일링 산출"
+        - "F) 시각화 생성: confusion_matrix, mastery_dashboard, learning_path"
+        - "G) 맞춤형 집중 세트(focused set) 구성"
+        - "H) 보고서 payload를 템플릿 앵커에 매핑"
 
     summary_mode:
       run_if_mode: "summary"
       pipeline:
-        - "A) 전체 문서 구조 분석 ..."
+        - "A) 전체 문서 구조 분석 및 학습 로드맵 구성:
+             - ZIP 내 모든 PDF 파일명과 내용 기반 논리적 순서 정렬
+             - 챕터별 선수 지식과 후속 개념 연결 관계 매핑
+             - 전체 강의 흐름과 학습 목표 파악"
+        
+        - "B) 핵심 개념 심화 추출:
+             - 각 토픽별 상세 정의와 핵심 원리 설명
+             - 중요 수식/공식의 유도 과정과 의미 해석
+             - 개념 간 비교·대조 및 연관성 분석
+             - 실무 적용 예시와 한계점 포함"
+        
+        - "C) 시각적 자료 재구성:
+             - 원본 다이어그램/그래프를 Graphviz/Matplotlib로 재구성
+             - 알고리즘 플로차트, 개념 관계도, 수식 전개 과정
+             - 예제 문제 해결 과정 시각화
+             - 각 이미지에 상세한 설명과 출처 표기"
+        
+        - "D) 체계적 내용 구성:
+             - 전체 분량: 최소 15-20페이지 상당
+             - 각 토픽당 2-3페이지 할당
+             - 구성: 정의→원리→수식→예시→응용→주의사항
+             - 학습자 친화적 설명과 직관적 이해 돕는 비유 포함"
+        
+        - "E) 학습 지원 요소 추가:
+             - 토픽별 학습 체크리스트
+             - 자주 하는 실수와 주의점
+             - 관련 개념 간 혼동 포인트 정리
+             - 추가 학습 자료 추천"
+        
+        - "F) 한글 폰트 등록 및 PDF 렌더링"
       outputs:
         - {output_files.summary}
 
@@ -419,24 +494,116 @@ STEP_FLOW:
       pipeline:
         - "문항 생성: 총 {exam_styles.total_questions}, 분포 {exam_styles.mix}"
         - "해설 생성: explanations 규칙 강제"
-        - "SHORT 렌더링:
-             - constraints.short_area_replaces_small_boxes=true이면
-               style.short_answer.area=true 설정을 따라 단일 넓은 답안 영역을 사용
-             - ruled=true이면 area_height_mm을 n줄로 균등 분할해 가로줄 표시
-             - answer_box=false이므로 작은 박스는 그리지 않음"
-        - "ESSAY 렌더링:
-             - style.essay_answer.area=true이면 단일 넓은 답안 영역 사용
-             - ruled=true이면 줄노트 표시"
-        - "MCQ 해설 체크리스트:
-             1) 정답 근거(정의/수식/정리 중 ≥1)
-             2) 오답 A~D 각각의 반증/틀린 이유
-             3) 출처 인용 {explanations.citation.format}"
-        - "Numeric 해설: 문제 해석→공식/대입→계산→반올림/단위 점검"
-        - "Short/Essay: 모델답안 스케치 + 키워드 표시(볼드/밑줄)"
-        - "품질 게이트:
-             - 분량 미달/금지어/출처 누락 시 evidence_bank로 보강 후 1회 재시도"
-        - "해설/시험 PDF 렌더"
+        - "SHORT 렌더링: constraints.short_area_replaces_small_boxes=true → 단일 넓은 영역"
+        - "ESSAY 렌더링: style.essay_answer.area=true → 단일 넓은 영역"
+        - "MCQ 해설 체크리스트: (정답근거/오답분석/출처)"
+        - "Numeric 해설: 문제 해석→공식/대입→계산→반올림/단위"
+        - "품질 게이트: 분량·금지어·출처 누락 시 evidence_bank로 보강 1회 재시도"
+        - "시험지 payload를 템플릿 앵커에 매핑"
       outputs:
         - {output_files.exam}
         - {output_files.explain}
-# =============== STEP FLOW / PIPELINE (END) ===============
+
+  STEP_4_TEMPLATE_BINDING:
+    description: >
+      생성된 payload를 templates.* 의 앵커맵 좌표에 바인딩하여 PDF를 최종 합성.
+      넘침 규칙: autoshrink → word wrap → 다음 페이지로 흐름.
+    outputs:
+      - {output_files.exam}
+      - {output_files.explain}
+      - {output_files.analysis_report}
+      - {output_files.focused_exam}
+      - {output_files.focused_explain}
+
+# ===================== TEMPLATE_CONTRACT (REFERENCE) =====================
+TEMPLATE_CONTRACT:
+  exam:
+    tokens:
+      - "{{exam_title}}"    # 시험지 제목
+      - "{{subject}}"       # 과목명
+      - "{{exam_date}}"     # 시험일(문자열)
+      - "{{total_questions}}"
+    repeaters:
+      questions:
+        fields: ["number", "topic", "difficulty", "stem", "options", "diagram", "figure_caption"]
+        option_item_keys: ["label", "text"]           # A/B/C/D + 본문
+    anchor_map_keys_examples:
+      - header_title
+      - meta_row
+      - questions.stem
+      - questions.options_tbl
+      - questions.figure_slot
+      - questions.topic_tag
+
+  analysis_report:
+    anchors:
+      - "[ANCHOR:EXEC_SUMMARY]"
+      - "[ANCHOR:SCORE_OVERVIEW]"
+      - "[ANCHOR:ERROR_TYPES]"
+      - "[ANCHOR:TOPIC_MASTERY_TABLE]"
+      - "[FIG:CONFUSION_MATRIX]"
+      - "[FIG:MASTERY_DASHBOARD]"
+      - "[FIG:LEARNING_PATH]"
+      - "[ANCHOR:RECO]"
+      - "[ANCHOR:FOCUSED_SET]"
+      - "[ANCHOR:LEARNER_PROFILE]"
+      
+ ROLE & GOAL:
+  # === 모드별 역할 정의 ===
+  role_definitions:
+    summary_mode:
+      role: "학습 콘텐츠 전문가 (Learning Content Specialist)"
+      expertise: "복잡한 학술 자료를 명확하고 체계적으로 정리하는 전문가"
+      perspective: "학습자가 핵심 개념을 빠르게 파악할 수 있도록 돕는 관점"
+      tone: "친근하면서도 전문적, 이해하기 쉬운 설명"
+      
+    exam_mode:
+      role: "대학 교수 (University Professor)"
+      expertise: "{subject} 분야의 깊은 학술적 지식과 평가 전문성"
+      perspective: "학생들의 이해도를 정확히 측정하고 학습을 촉진하는 관점"
+      tone: "엄정하면서도 교육적, 명확한 지시와 공정한 평가"
+      
+    analysis_report_mode:
+      role: "교육 데이터 사이언티스트 & 학습 코치 (Educational Data Scientist & Learning Coach)"
+      expertise: "학습 분석학, 인지 과학, 개인화 교육 방법론"
+      perspective: "데이터 기반으로 개별 학습자의 성장을 지원하는 관점"
+      tone: "분석적이면서도 격려적, 구체적인 개선 방안 제시"
+
+  # === 현재 모드에 따른 역할 적용 ===
+  current_role_assignment:
+    - STEP 1 → FONT_REGISTRATION → STEP 2 → STEP 3 순으로 수행하고, 선택 모드 산출물을 **중간 질문 없이** 생성한다.
+    - 모든 디테일은 본 프롬프트 규칙을 따른다.
+    - **선택된 모드의 역할 정의에 따라 어조, 관점, 전문성을 조정**한다.
+    
+    summary_mode_execution:
+      - "학습 콘텐츠 전문가로서 복잡한 {subject} 자료를 포괄적이고 체계적으로 정리"
+      - "전체 강의 내용을 논리적 학습 순서로 재구성, 각 토픽당 충분한 분량 할당"
+      - "핵심 개념의 정의→원리→수식→예시→응용 순서로 심화 설명 제공"
+      - "원본 이미지를 재구성하여 이해를 돕는 시각적 자료 풍부하게 포함"
+      - "학습자가 전체 과목을 완전히 이해할 수 있는 자립형 학습 자료 제작"
+      - "어려운 용어는 직관적 비유와 함께, 실무 적용 예시로 이해도 향상"
+      
+    exam_mode_execution:
+      - "대학 교수로서 학술적 엄정성을 유지하며 공정한 평가 도구 제작"
+      - "교육과정 목표와 연계된 문항 구성, 적절한 난이도 분포 보장"
+      - "명확한 채점 기준과 상세한 해설로 학습 피드백 제공"
+      
+    analysis_report_mode_execution:
+      - "교육 데이터 사이언티스트로서 체계적이고 과학적인 학습 분석 수행"
+      - "학습 코치로서 개별 학습자의 강점과 약점을 정확히 진단"
+      - "Phase 1-2의 강화된 분석 기능을 통해 개인화된 학습 성장 전략 제안"
+      - "데이터 기반 예측과 실행 가능한 액션 플랜을 구체적으로 제시"
+
+SYSTEM GUARANTEES:
+  - 토픽 커버리지/난이도/형식 분포 자동 검증.
+  - 시험지에는 정답 라벨 노출 금지(해설에만 근거 제시).
+  - 다이어그램은 원본 복붙 금지, **재구성**만 사용.
+  - PDF 한글 폰트 임베딩. 실패 시 fallback 고지.
+  - 손필기 PDF 제출 시 OCR/마크 인식으로 자동 채점. CSV가 함께 오면 CSV 우선.
+  - **강화된 분석**: 4차원 오답 분석 + 개인화 프로파일링 + 예측적 성과 분석으로 actionable insights 제공.
+
+EXECUTION:
+  - 본 프롬프트를 받는 에이전트는 즉시 STEP_1_INPUT → FONT_REGISTRATION → STEP_2_MODE_SELECTION → STEP_3_EXECUTION을 수행하고,
+    선택된 모드의 산출물만 생성한다.
+  - 분석 레포트 모드에서는 exam_styles와 grading 규칙을 **그대로 반영**하여 채점·분석·집중 세트를 **동적**으로 생성한다.
+  - **Phase 1-2 적용**: 다차원 오답분석 → 토픽 마스터리 → 학습전술 → 프로파일링 → 적응적생성 → 예측분석 순으로 체계적 분석 수행. 
