@@ -28,7 +28,7 @@ FYEX는 단순한 시험 문제 생성기를 넘어, **강의 요약 → 시험 
 - [FYEX Prompt](https://github.com/Mindol7/FYEX-For-Your-EXam/blob/main/FYEX%20prompt.txt) 업로드
 
 ### 2. 모드 선택
-- **사용하고자 하는 모드 true 설정 및 이외의 모드 false 설정**  
+- **사용하고자 하는 모드(exam, summary, analysis_report)를 'mode: '에 입력**  
 - `Summary Mode`: 강의 요약 PDF 생성  
 - `Exam Mode`: 시험 문제 + 해설 PDF 생성  
 - `Analysis Mode`: 학습 분석 및 리포트 생성
